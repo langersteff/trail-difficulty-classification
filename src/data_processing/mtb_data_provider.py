@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import glob
 
 TIME_COLUMN = "time (01:00)"
 
@@ -10,27 +11,39 @@ TIME_COLUMN = "time (01:00)"
 class MtbDataProvider:
 
     @staticmethod
-    def load_data(acc_data_filepath, frequency):
+    def load_data(acc_data_filepath, acc_data_file_ending, frequency):
         # Guess the labels file name
-        acc_labels_filepath = acc_data_filepath.replace('.csv', '_labels.csv')
+        acc_labels_filepath = acc_data_filepath + '_labels.csv'
 
-        # Read CSV files
-        acc_data = pd.read_csv(acc_data_filepath)
+        acc_data_filepaths = glob.glob(acc_data_filepath + acc_data_file_ending)
+        print(acc_data_filepaths, acc_labels_filepath)
+
+        acc_datas = []
+        for acc_data_filepath in acc_data_filepaths:
+
+            # Read CSV files
+            acc_data = pd.read_csv(acc_data_filepath)
+
+            # Fill data_processing gaps
+            acc_data[TIME_COLUMN] = pd.to_datetime(acc_data[TIME_COLUMN])
+            acc_data = acc_data.set_index(TIME_COLUMN)
+            acc_data.asfreq(str(frequency) + 'L')
+
+            # Interpolate Data
+            for column in acc_data.columns:
+                acc_data[column].interpolate(inplace=True, limit_direction='both')
+
+            acc_datas.append(acc_data.to_numpy())
+
         acc_labels = pd.read_csv(acc_labels_filepath)
-
-        # Fill data_processing gaps
-        acc_data[TIME_COLUMN] = pd.to_datetime(acc_data[TIME_COLUMN])
-        acc_data = acc_data.set_index(TIME_COLUMN)
-        acc_data.asfreq(str(frequency) + 'L')
-
-        # Interpolate Data
-        for column in acc_data.columns:
-            acc_data[column].interpolate(inplace=True, limit_direction='both')
-
-        acc_data = acc_data.to_numpy()
         acc_labels = acc_labels.to_numpy()
 
-        return acc_data, acc_labels
+        # If there was only one file, just return the first value
+        if len(acc_data_filepaths) == 1:
+            return acc_datas[0], acc_labels
+        else:
+            return np.asarray(acc_datas), acc_labels
+
 
     @staticmethod
     def slice_single_sensor(acc_data, acc_labels, window_size, frequency):
