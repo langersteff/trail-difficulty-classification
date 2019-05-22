@@ -1,7 +1,7 @@
-from keras import regularizers
-from keras.layers import Dense, Activation, BatchNormalization, Flatten, Conv1D, Dropout
-from keras.models import Sequential
-from keras.optimizers import Adam
+from tensorflow.python.keras  import regularizers
+from tensorflow.python.keras.layers import Dense, Activation, BatchNormalization, Flatten, Conv1D, Dropout
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.optimizers import Adam
 
 
 class Conv1dModel:
