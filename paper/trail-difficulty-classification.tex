@@ -1,0 +1,180 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+% \renewcommand\UrlFont{\color{blue}\rmfamily}
+	
+\begin{document}
+%
+\title{Difficulty classification of mountainbike trails utilizing deep neural networks}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+\author{Stefan Langer\inst{1}}
+%
+\authorrunning{F. Author et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{LMU Munich
+\email{stefan.langer@ifu.lmu.de}\\
+\url{http://www.mobile.ifi.lmu.de} }
+%
+\maketitle              % typeset the header of the contributionY>
+%
+\begin{abstract}
+The difficulty of mountainbike downhill trails is a subjective perception. 
+There are multiple classifications of trails such as a Singletrail-Scale (S1-S6) or a color scale (blue, red, black), which are mostly used in dedicated mountainbike parks. 
+We propose a deep neural network pipeline to classify trails into the latter. 
+We generate an open dataset of acceleration data from multiple sensors, that were connected to the mountainbike frame as well as the rider.
+We train a 2D convolutional neural network with a stacked and concatenated representation of the aforementioned acceleration signals.
+We achieve an accuracy of 90\% on our test data and a 100\% accuracy on riders subjective feeling.
+As to our knowledge this is the first work utilizing deep neural networks for mountainbike sports analytics.
+
+
+\keywords{Sports analytics  \and Deep neural networks \and Accelerometer \and Convolutional neural networks.}
+\end{abstract}
+%
+%
+%
+\section{Introduction}
+Mountainbiking is a sport originated in X in year Y
+Many types of riding, from more uphill oriented to downhill oriented
+This paper focuses on the latter
+There are multiple approaches in difficulty classification
+e.g. Singletrail skala, which is more european, from S1 to S6, examples can be seen here
+Singletrail skala is more valuable for non-bikepark tracks
+On the otherhand classification into colors. Blue easy, red intermediate, black hard, double black diamond very hard. 
+Can't do the latter
+However, ratings are generally very subjective
+This paper is supposed to learn from subjective labels and apply those on other tracks.
+With our approach hoping to find the consensus between multiple subjective labels.
+
+
+\subsection{Sensor data analysis - state of the art}
+To our knowledge there is no scientific work towards difficulty classification of mtb trails
+However, there is a great amount of work towards sensor based analyses with classical machine learning.
+Classical approaches need domain specific knowledge, and handcrafted feature engineering
+In recent years there has been a shift towards deep learning
+One well researched section of sensor data analysis is the field of activity recognition
+A lot of work has gone into classical, handcrafted approaches
+Many papers using convolutional networks though. 
+Which is the approach we follow
+
+\subsection{Sports analytics (in mountainbiking)}
+Telemetry for how much braking, suspension and so on
+Rider specific data (heartrate etc.)
+This is more of an athelete centered research
+This work is more venue centered
+
+Sensor data in sports are widely used
+e.g. starting with smart devices like smartwatches etc. that keep track of rides
+Apps like Strava, which offers a comparison in speed
+However, no comparison in difficulty
+One could use this work to automatically tell the difficulty of a ride, which would make things more comparable. 
+This could also be applied to other sports.
+
+Some applications make use of the singletrail skala to show the difficulty of rides. 
+One such app would be Komoot. 
+Utilizing Open Street Maps, the application knows which part of the tracks have which difficulty, since they are labeled within those maps.
+This knowledge can then be aggregated to an overall difficulty of a ride.
+
+
+
+
+\section{The OMTB dataset}
+
+\subsection{Collecting and labeling data}
+Sensor Units
+
+Mounting on bike and helmet
+
+
+
+We collected data in multiple types of locations, namely bikeparks and open trails (hiking paths)
+For bikepark we can use the difficulty given by the operator. 
+For gaps inbetween sections, we label the connection bits respectively.
+Mostly 0 because the connectors are fire roads normally
+For singletracks that are not in operated bikeparks, we use singletrail skala values given by Open Street Maps and map them to our colored label-scheme respectively.
+Table X shows the mappings. We leave out difficulties above S3, since they were not rideable by our non-professional riders. 
+Those singletracks have connection bits inbetween as well, which we label through OSM also
+For bits, that the riders named to be obviously more or less difficult than the given rating we down- or upgraded the rating. (TODO: This feels wrong)
+
+\subsection{Data representation}
+We have 2 units of which we use 3 sensors each
+First sensor accelerometer, which shows acceleration in 3 axes (x, y, z) in the unit g
+This sensor sends in 12.500Hz
+Second sensor is gyroscope, which shows rotational speeds in 3 axes (x, y, z) in the unit deg/s
+This sensor sends in 25.000Hz
+Third sensor is the barometer, which shows the relative difference in air pressure, hence metres above sea level
+This sensor sends in 250Hz
+
+Syncing and interpolating
+
+
+
+\section{Classification through a 2D convolutional neural network}
+
+
+\subsection{Input format}
+What does the resulting "image" look like?
+
+\subsection{Network architecture}
+Why which window size?
+Why which kernel size?
+Net summary
+
+% TODO: remove subsections if unnecessary
+
+\section{Evaluation}
+
+
+\subsection{Prediction on a labeled test data set}
+
+\subsection{Subjective feeling of riders}
+
+\subsection{Automated clustering of recordings}
+
+\section{Discussion}
+
+In this work, we proposed an end-to-end approach to classify mountainbike trails regarding their difficulty. 
+We collected acceleration data on mountainbike rides, which we released under the name OMTB dataset for further exploration.
+For the classification, we utilized a 2D convolutional neural network which achieved 90\% accuracy on a labeled test set as well as 100\% on riders' subjective feel \cite{ref_article1,ref_lncs1,ref_book1}.
+We hope to promote sports analytics for downhill mountainbiking with this work.
+For future work we suggest to enhance the OMTB dataset in terms of sample quantity as well as sensor data dimensions. 
+Other sensors that might be of interest are the gyroscope to detect relative rotations, the barometer to detect changes in elevation, heart rate sensors to detect excitement and more.
+Because difficulty classifications in trail centres are subjective, it would be feasible to not use labeled data in training and perform  unsupervised clustering.
+This could lead to a novel way of difficulty classification. 
+In order to keep the known classes (such as blue, red, black) one would have to vote for the majority of labeled classes in one cluster.
+Mounting on helmet causes anomalies when not riding
+The barometer does not show any significant influence
+
+
+
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+% \bibliographystyle{splncs04}
+% \bibliography{mybibliography}
+%
+% TODO: Create a dedicated bib file
+%
+\begin{thebibliography}{8}
+\bibitem{ref_article1}
+Author, F.: Article title. Journal \textbf{2}(5), 99--110 (2016)
+
+\end{thebibliography}
+\end{document}

@@ -1,5 +1,5 @@
 from keras import regularizers
-from keras.layers import Dense, Activation, BatchNormalization, Flatten, Conv2D, Dropout
+from keras.layers import Dense, Activation, BatchNormalization, Flatten, Conv2D, Dropout, MaxPooling2D
 from keras.models import Sequential
 from keras.optimizers import Adam
 
@@ -10,10 +10,10 @@ class Conv2dModel:
     def build_model(input_shape=(25, 2, 3),
                     cnn_blocks=3,
                     num_filters=3,
-                    kernel_size=(5, 2),
-                    dropout=0.1,
+                    kernel_size=(5, 1),
+                    dropout=0.2,
                     learning_rate=1e-3,
-                    weight_decay=0,
+                    weight_decay=0.01,
                     activation='relu'):
         model = Sequential()
         model.add(Conv2D(num_filters,
@@ -23,23 +23,22 @@ class Conv2dModel:
                          input_shape=input_shape))
         model.add(BatchNormalization())
         model.add(Activation(activation))
-        #        model.add(MaxPooling2D(pool_size=2))
-        model.add(Dropout(dropout))
 
         for i in range(cnn_blocks - 1):
-            model.add(Conv2D(num_filters * (i+1),
+            model.add(Conv2D(2 ** (i+3),
                              kernel_size=kernel_size,
                              kernel_regularizer=regularizers.l2(weight_decay),
                              padding='same'
                              ))
             model.add(BatchNormalization())
             model.add(Activation(activation))
-            #            model.add(MaxPooling2D(pool_size=2))
+            model.add(MaxPooling2D(pool_size=(2, 1)))
             model.add(Dropout(dropout))
         # FC
         model.add(Flatten())
-        # output
-        model.add(Dense(3, activation='softmax'))
+
+        model.add(Dense(128))
+        model.add(Dense(6, activation='softmax'))
         model.compile(
             loss='sparse_categorical_crossentropy',
             metrics=['sparse_categorical_accuracy'],
