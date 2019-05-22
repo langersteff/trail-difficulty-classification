@@ -23,6 +23,8 @@ class Conv2dModel:
                          input_shape=input_shape))
         model.add(BatchNormalization())
         model.add(Activation(activation))
+        model.add(MaxPooling2D(pool_size=(2, 1)))
+        model.add(Dropout(rate=1 - dropout))
 
         for i in range(cnn_blocks - 1):
             model.add(Conv2D(2 ** (i + 3),
@@ -33,7 +35,7 @@ class Conv2dModel:
             model.add(BatchNormalization())
             model.add(Activation(activation))
             model.add(MaxPooling2D(pool_size=(2, 1)))
-            model.add(Dropout(dropout))
+            model.add(Dropout(rate = 1 - dropout))
         # FC
         model.add(Flatten())
 
