@@ -25,7 +25,7 @@ class Conv2dModel:
         model.add(Activation(activation))
 
         for i in range(cnn_blocks - 1):
-            model.add(Conv2D(2 ** (i+3),
+            model.add(Conv2D(2 ** (i + 3),
                              kernel_size=kernel_size,
                              kernel_regularizer=regularizers.l2(weight_decay),
                              padding='same'
