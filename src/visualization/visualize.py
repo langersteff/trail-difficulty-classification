@@ -23,11 +23,7 @@ class MtbVisualizer:
             elif difficulty == 2:
                 color = 'black'
             elif difficulty == 3:
-                color = 'yellow'
-            elif difficulty == 4:
                 color = 'white'
-            elif difficulty == 5:
-                color = 'orange'
             else:
                 continue
 
@@ -36,13 +32,12 @@ class MtbVisualizer:
         plt.show()
 
     @staticmethod
-    def print_confusion_matrix(y, y_pred):
-        labels = [0, 1, 2]
+    def print_confusion_matrix(y, y_pred, labels):
         cm = confusion_matrix(y, y_pred, labels)
         fig = plt.figure()
         ax = fig.add_subplot(111)
         cax = ax.matshow(cm)
-        plt.title('Confusion matrix of the classifier')
+        plt.title('Foo')
         fig.colorbar(cax)
         ax.set_xticklabels([''] + labels)
         ax.set_yticklabels([''] + labels)

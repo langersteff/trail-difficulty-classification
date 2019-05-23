@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 venv/
+checkpoints/
 *.egg-info/
 .installed.cfg
 *.egg
