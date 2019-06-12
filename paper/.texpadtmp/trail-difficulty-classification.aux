@@ -1,20 +1,71 @@
 \relax 
-\@writefile{toc}{\contentsline {title}{Difficulty classification of mountainbike trails utilizing deep neural networks}{1}\protected@file@percent }
+\citation{gaulrapp2001injuries}
+\citation{impellizzeri2007physiology}
+\citation{imbarating,britishcyclinggrades,schymik2008singletrail}
+\citation{imbarating}
+\citation{imbaguidelines}
+\citation{britishcyclinggrades}
+\citation{schymik2008singletrail}
+\citation{osmsingletrails}
+\citation{osmsingletrails}
+\citation{osmsingletrails}
+\@writefile{toc}{\contentsline {title}{Difficulty classification of mountainbike downhill trails utilizing deep neural networks}{1}\protected@file@percent }
 \@writefile{toc}{\authcount {1}}
 \@writefile{toc}{\contentsline {author}{Stefan Langer}{1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Sensor data analysis - state of the art}{1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Sports analytics (in mountainbiking)}{2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}The OMTB dataset}{2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Collecting and labeling data}{2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Data representation}{2}\protected@file@percent }
-\citation{ref_article1,ref_lncs1,ref_book1}
-\bibcite{ref_article1}{1}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Classification through a 2D convolutional neural network}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Input format}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Network architecture}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Evaluation}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Prediction on a labeled test data set}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Subjective feeling of riders}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Automated clustering of recordings}{3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{3}\protected@file@percent }
+\citation{bybtelemetry}
+\citation{stendecracing}
+\citation{ravi2005activity,bao2004activity,kwapisz2011activity,lara2012survey,yang2015deep,zeng2014convolutional,ronao2016human}
+\citation{ravi2005activity,bao2004activity,kwapisz2011activity,lara2012survey,preece2008comparison}
+\citation{preece2008comparison}
+\citation{bao2004activity}
+\citation{yang2015deep,zeng2014convolutional,ronao2016human}
+\citation{moya2018convolutional}
+\citation{zeng2014convolutional}
+\citation{wang2019deep}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Mountainbike analytics and sensor data analysis}{2}\protected@file@percent }
+\citation{mbientlab}
+\@writefile{toc}{\contentsline {section}{\numberline {2}The dataset}{3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Collecting and labeling data}{3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Mounting point on the helmet (left), mounting point on the downtube of the frame (right)}}{3}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig1}{{1}{3}}
+\citation{zeng2014convolutional}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Mapping of the Singletrail-Skala grades to the labels used in our data set. Labels 0-2 represent the difficulties, label 3 represents non-riding segments.}}{4}\protected@file@percent }
+\newlabel{table:coloredgrading}{{1}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Input data representation}{4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Input shape of one sample comprising 4 sensors with 3 dimensions (axes) each}}{5}\protected@file@percent }
+\newlabel{fig2}{{2}{5}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Classification through a 2D convolutional neural network}{5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Convolutional Neural Network for trail difficulty classification on stacked accelerometer and gyroscope data. The input data is of shape (n, 4, 3), with n being the amount of data points per sample. After the input layer three convolutional blocks (consisting of Conv2D, Batch Normalization, Activation, Max Pooling and Dropout layers) and two fully connected layers follow. The last layer results in a softmax activation.}}{6}\protected@file@percent }
+\newlabel{fig3}{{3}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Experiments}{6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Sparse Categorical Accuracy of multiple kernel an window sizes. A window size of 5000ms with a kernel size of (10,2) creates the highest sparse categorical accuracy on the test dataset.}}{7}\protected@file@percent }
+\newlabel{table:configurations}{{2}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plot of the Sparse Categorical Accuracy (sca) on the train set (blue) as well as on the test set (orange). Both curves level out early on, not drifting apart, presuming a low amount of overfitting.}}{8}\protected@file@percent }
+\newlabel{fig4}{{4}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The confusion matrix on the test dataset shows a good result with only minor false positives in neighbored areas. A underrepresentation of the label 2 (hard) is noticeable.}}{8}\protected@file@percent }
+\newlabel{fig3}{{5}{8}}
+\bibstyle{IEEEtran}
+\bibdata{library.bib}
+\bibcite{gaulrapp2001injuries}{1}
+\bibcite{impellizzeri2007physiology}{2}
+\bibcite{imbarating}{3}
+\bibcite{britishcyclinggrades}{4}
+\bibcite{schymik2008singletrail}{5}
+\bibcite{imbaguidelines}{6}
+\bibcite{osmsingletrails}{7}
+\bibcite{bybtelemetry}{8}
+\bibcite{stendecracing}{9}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{9}\protected@file@percent }
+\bibcite{ravi2005activity}{10}
+\bibcite{bao2004activity}{11}
+\bibcite{kwapisz2011activity}{12}
+\bibcite{lara2012survey}{13}
+\bibcite{yang2015deep}{14}
+\bibcite{zeng2014convolutional}{15}
+\bibcite{ronao2016human}{16}
+\bibcite{preece2008comparison}{17}
+\bibcite{moya2018convolutional}{18}
+\bibcite{wang2019deep}{19}
+\bibcite{mbientlab}{20}
