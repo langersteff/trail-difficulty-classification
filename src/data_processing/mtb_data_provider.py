@@ -14,7 +14,7 @@ class MtbDataProvider:
         # Guess the labels file name
         labels_filepath = data_filepath + '_labels.csv'
 
-        data_filepaths = glob.glob(data_filepath + data_file_ending)
+        data_filepaths = sorted(glob.glob(data_filepath + data_file_ending))
 
         data_array = []
         for data_filepath in data_filepaths:
@@ -44,7 +44,7 @@ class MtbDataProvider:
             return np.asarray(data_array), labels
 
     @staticmethod
-    def slice_sensors(data_array, sensor_labels, window_size, frequency, step_size=0.5):
+    def slice_sensors(data_array, sensor_labels, window_size, frequency, step_size=0.5, dismiss_not_riding_label=False):
 
         sample_size = window_size // frequency
 
@@ -83,9 +83,28 @@ class MtbDataProvider:
                 else: # if there is no next label: cancel here
                     break
 
+            if dismiss_not_riding_label and current_label_row[2] is 3:
+                continue
+
+
             # Append the slice and difficulty
             X.append(slice[:, :, 2:5])
             y.append(current_label_row[2])
+
+            # TODO THIS IS AN UGLY HACK!
+            if current_label_row[2] is 0:
+                X.append(slice[:, :, 2:5])
+                y.append(current_label_row[2])
+            elif current_label_row[2] is 2:
+                X.append(slice[:, :, 2:5])
+                y.append(current_label_row[2])
+                X.append(slice[:, :, 2:5])
+                y.append(current_label_row[2])
+                X.append(slice[:, :, 2:5])
+                y.append(current_label_row[2])
+                X.append(slice[:, :, 2:5])
+                y.append(current_label_row[2])
+
 
         return np.array(X), np.asarray(y)
 

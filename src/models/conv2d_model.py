@@ -14,7 +14,8 @@ class Conv2dModel:
                     dropout=0.2,
                     learning_rate=1e-3,
                     weight_decay=0.01,
-                    activation='relu'):
+                    activation='relu',
+                    dismiss_not_riding_label=False):
         model = Sequential()
         model.add(Conv2D(num_filters,
                          kernel_size=kernel_size,
@@ -40,7 +41,12 @@ class Conv2dModel:
         model.add(Flatten())
 
         model.add(Dense(128, activation='relu'))
-        model.add(Dense(4, activation='softmax'))
+
+        if not dismiss_not_riding_label:
+            model.add(Dense(4, activation='softmax'))
+        else:
+            model.add(Dense(3, activation='softmax'))
+
         model.compile(
             loss='sparse_categorical_crossentropy',
             metrics=['sparse_categorical_accuracy'],

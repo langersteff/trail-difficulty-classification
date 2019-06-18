@@ -7,12 +7,17 @@ from matplotlib.pyplot import figure
 class MtbVisualizer:
 
     @staticmethod
-    def plot_results(X, y, sample_size, file_path=None):
+    def plot_results(X, y, sample_size, file_path=None, plot_one_axis=False):
         figure(num=None, figsize=(15, 5), dpi=80, facecolor='w', edgecolor='k')
         X = np.concatenate(X, axis=0)
-        plt.plot(X[:, 0])
-        plt.plot(X[:, 1])
-        plt.plot(X[:, 2])
+
+
+        if not plot_one_axis:
+            plt.plot(X[:, 0])
+            plt.plot(X[:, 1])
+            plt.plot(X[:, 2])
+        else:
+            plt.plot(X[:, plot_one_axis])
 
         for i in range(0, y.shape[0]):
             difficulty = y[i]
@@ -30,7 +35,7 @@ class MtbVisualizer:
             plt.axvspan(i * sample_size, (i + 1) * sample_size, color=color, alpha=0.2)
 
         if file_path is not None:
-            plt.savefig(file_path)
+            plt.savefig(file_path, dpi=300)
         else:
             plt.show()
 
@@ -51,7 +56,7 @@ class MtbVisualizer:
         plt.ylabel('True')
 
         if file_path is not None:
-            plt.savefig(file_path)
+            plt.savefig(file_path, dpi=300)
         else:
             plt.show()
 
