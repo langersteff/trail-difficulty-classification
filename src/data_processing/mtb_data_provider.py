@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 import glob
+from sklearn.utils import shuffle
 
 TIME_COLUMN = "time (01:00)"
 
@@ -91,22 +92,41 @@ class MtbDataProvider:
             X.append(slice[:, :, 2:5])
             y.append(current_label_row[2])
 
-            # TODO THIS IS AN UGLY HACK!
-            if current_label_row[2] is 0:
-                X.append(slice[:, :, 2:5])
-                y.append(current_label_row[2])
-            elif current_label_row[2] is 2:
-                X.append(slice[:, :, 2:5])
-                y.append(current_label_row[2])
-                X.append(slice[:, :, 2:5])
-                y.append(current_label_row[2])
-                X.append(slice[:, :, 2:5])
-                y.append(current_label_row[2])
-                X.append(slice[:, :, 2:5])
-                y.append(current_label_row[2])
-
-
         return np.array(X), np.asarray(y)
+
+    @staticmethod
+    def evenly_oversample(X, y):
+
+        X_result = []
+        y_result = []
+
+        unique, counts = np.unique(y, return_counts=True)
+        max_count = max(counts)
+        counts_dict = dict(zip(unique, counts))
+        oversample_count = {
+            0: -max_count,
+            1: -max_count,
+            2: -max_count,
+        }
+
+        for i in range(0, X.shape[0]):
+            label = y[i]
+            multiply_factor = int(np.ceil(max_count / counts_dict[label]))
+            for j in range(0, multiply_factor):
+                if oversample_count[label] < 0:
+                    X_result.append(X[i])
+                    y_result.append(y[i])
+                    oversample_count[label] += 1
+
+        X_result = np.array(X_result)
+        y_result = np.array(y_result)
+
+
+        X_result, y_result = shuffle(X_result, y_result)
+
+        return X_result, y_result
+
+
 
     @staticmethod
     def sync_sensors(sensors_data):

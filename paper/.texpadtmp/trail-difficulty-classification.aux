@@ -13,7 +13,7 @@
 \citation{osmsingletrails}
 \@writefile{toc}{\contentsline {title}{Difficulty Classification of Mountainbike Downhill Trails utilizing Deep Neural Networks}{1}\protected@file@percent }
 \@writefile{toc}{\authcount {1}}
-\@writefile{toc}{\contentsline {author}{Stefan Langer, Robert M\"uller, Claudia Linnhoff-Popien}{1}\protected@file@percent }
+\@writefile{toc}{\contentsline {author}{Stefan Langer, Robert M\"uller, Kyrill Schmid and Claudia Linnhoff-Popien}{1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}\protected@file@percent }
 \citation{bybtelemetry}
 \citation{stendecracing}
@@ -41,20 +41,21 @@
 \citation{hahnloser2000digital}
 \citation{matsugu2003subject}
 \citation{srivastava2014dropout}
+\citation{keraspaddingsame}
+\citation{ng2004feature}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Input shape of one sample comprising four sensors with three dimensions (axes) each}}{5}\protected@file@percent }
 \newlabel{fig2}{{2}{5}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Classification through a 2D convolutional neural network}{5}\protected@file@percent }
 \citation{moolayil2019keras}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Convolutional Neural Network for trail difficulty classification on stacked accelerometer and gyroscope data. The input data is of shape (n, 4, 3), with n being the amount of data points per sample. After the input layer, three convolutional blocks and two fully connected layers follow.}}{6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Convolutional Neural Network for trail difficulty classification on stacked accelerometer and gyroscope data. The input data is of shape ($n$, 4, 3), with n being the amount of data points per sample. After the input layer, three convolutional blocks and two fully connected layers follow.}}{6}\protected@file@percent }
 \newlabel{fig3}{{3}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Experiments}{6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Sparse Categorical Accuracy of the experiments. A window size of 2000ms and a kernel size of (40,2) creates the highest accuracy.}}{7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Sparse categorical accuracy and amount of epochs of the experiments. A window size of 10000ms with a kernel size of (60,2) creates the highest accuracy (0.9097) after 781 epochs on the test dataset.}}{7}\protected@file@percent }
 \newlabel{table:configurations}{{2}{7}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plot of the Sparse Categorical Accuracy (sca) on the train set (blue) as well as on the test set (orange).}}{7}\protected@file@percent }
-\newlabel{fig4}{{4}{7}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The confusion matrix on the test dataset shows good results for easy and medium trail segments with few false positives in neighbored areas. An underrepresentation of the label 2 (hard) is noticeable.}}{8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plot of the Sparse Categorical Accuracy (sca) on the train set (blue) as well as on the test set (orange).}}{8}\protected@file@percent }
+\newlabel{fig4}{{4}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The confusion matrix for a window size of 10000ms and a kernel size of (60,2).}}{8}\protected@file@percent }
 \newlabel{fig3}{{5}{8}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{8}\protected@file@percent }
 \bibstyle{IEEEtran}
 \bibdata{library.bib}
 \bibcite{ucidisciplines}{1}
@@ -66,6 +67,7 @@
 \bibcite{imbaguidelines}{7}
 \bibcite{openstreetmap}{8}
 \bibcite{osmsingletrails}{9}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{9}\protected@file@percent }
 \bibcite{bybtelemetry}{10}
 \bibcite{stendecracing}{11}
 \bibcite{ebert2017automated}{12}
@@ -84,4 +86,5 @@
 \bibcite{hahnloser2000digital}{25}
 \bibcite{matsugu2003subject}{26}
 \bibcite{srivastava2014dropout}{27}
-\bibcite{moolayil2019keras}{28}
+\bibcite{keraspaddingsame}{28}
+\bibcite{moolayil2019keras}{29}

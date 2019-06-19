@@ -16,13 +16,13 @@
 	
 \begin{document}
 \title{Difficulty Classification of Mountainbike Downhill Trails utilizing Deep Neural Networks}
-\titlerunning{Difficulty classification of mountainbike downhill trails}
+\titlerunning{Difficulty Classification of Mountainbike Downhill Trails}
 
-\author{Stefan Langer, Robert M\"uller, Claudia Linnhoff-Popien}
+\author{Stefan Langer, Robert M\"uller, Kyrill Schmid and Claudia Linnhoff-Popien}
 \authorrunning{Stefan Langer et al.}
 
 \institute{Mobile and Distributed Systems Group\\LMU Munich\\
-\email{\{stefan.langer, robert.mueller, linnhoff\}@ifi.lmu.de}\\
+\email{\{stefan.langer,robert.mueller,kyrill.schmid,linnhoff\}@ifi.lmu.de}\\
 }
 \maketitle
 
@@ -33,7 +33,7 @@ Inconsistencies in difficulty grading occur due to the various scales, different
 We propose an end-to-end deep learning approach to classify trails into three difficulties easy, medium, and hard by using sensor data.
 With mbientlab Meta Motion r0.2 sensor units, we record accelerometer- and gyroscope data of one rider on multiple trail segments.
 A 2D convolutional neural network is trained with a stacked and concatenated representation of the aforementioned data as its input.
-We run experiments with four different sample- and four different kernel sizes and achieve a maximum Sparse Categorical Accuracy of 0.6864.
+We run experiments with five different sample- and five different kernel sizes and achieve a maximum Sparse Categorical Accuracy of 0.9097.
 To the best of our knowledge, this is the first work targeting computational difficulty classification of mountainbike downhill trails.
 
 
@@ -63,7 +63,7 @@ Schymik et. al ~\cite{schymik2008singletrail} define the difficulties as follows
 Blue describes easy trails, comprising the grades S0 and S1.
 Red describes medium trails and is equal to the grade S2.
 Black describes all difficulties above and can be considered hard.
-\textit{Openstreetmap} provide difficulty classifications for all trails on which this dataset is collected ~\cite{osmsingletrails}.
+\textit{Openstreetmap} provides difficulty classifications for all trails on which this dataset is collected ~\cite{osmsingletrails}.
 We then train a 2D convolutional neural network with a stacked and concatenated representation of the aforementioned data as its input.
 Thereby we can grade sections of downhill trails regarding their difficulty.
 
@@ -128,8 +128,10 @@ black           & S3+          & 2     & \begin{tabular}[c]{@{}l@{}}Hard. \\ Loo
 Labeling of the data happens after the actual data collection process.
 We record every downhill ride with an action camera (mounted to the rider's chest), synchronize the video with the data recordings, and manually label subsections of the trail.
 For the majority of subsections on open trails, we use the difficulty grading provided by \textit{Openstreetmap}.
-For subsections that the \textit{Singletrail Skala} would consider to not represent this difficulty, we up- or downgrade the difficulty label.
+For subsections that the \textit{Singletrail Skala} would consider to not represent this difficulty (as per their description), we up- or downgrade the difficulty label.
 Downgrading mostly occurs for fireroads or other very easy sections, upgrading for particularly steep or tight sections.
+
+\FloatBarrier
 
 \subsection{Input data representation}
 
@@ -149,99 +151,104 @@ RGB-like channels are represented by the three axes x, y, and z.
 The square in the top left corner visualizes the kernel sliding across the input data.
 We split each recording into smaller samples utilizing a sliding window with an overlap of 75\%.
 This allows us to create many examples from few data recordings.
-In our experiments we test four different window sizes, namely 1000ms, 2000ms, 5000ms, and 10000ms, resulting in 25, 50, 125 and 250 data points per example.
-This leads to 5937, 2971, 1150 and 575 samples respectively.
-For a sample size of 2000ms, the dataset includes 944 (31.77\%) samples of label 0, 1691 (56.92\%) samples of label 1 and 336 (11.31\%) samples of label 2.
-
-
+In our experiments we test five different window sizes, namely 1000ms, 2000ms, 5000ms, 10000ms, and 20000ms resulting in 25, 50, 125, 250, and 500 data points per example.
+This leads to 5937, 2971, 1150, 575, and 286 samples respectively.
 
 \section{Classification through a 2D convolutional neural network}
 
 In order to classify mountainbike downhill trails regarding their difficulty, we apply a convolutional neural network.
 Fig.~\ref{fig3} visualizes the network's architecture.
-The input to the first block is of shape (n, 4, 3), with n being the amount of data points per sample. 
-One sample consists of data of 4 sensors (vertically stacked), with each three axes (filters), and a sample size of n data points.
+The input to the first block is of shape ($n$, 4, 3), with n being the amount of data points per sample. 
+One sample consists of data of four sensors (vertically stacked), with each three axes (filters), and a sample size of n data points.
 We chain three convolutional blocks followed by two Dense Layers.
 Each convolutional block consists of one Conv2D, a Batch Normalization ~\cite{ioffe2015batch}, a ReLU Activation ~\cite{hahnloser2000digital}, a Max Pool ~\cite{matsugu2003subject} and a Dropout Layer ~\cite{srivastava2014dropout}.
-The convolutional layers use a kernel of shape (m, 2) and a stride of (1, 1), with m being the length of the kernel.
+The convolutional layers use a kernel of shape ($m$, 2) and a stride of (1, 1), with m being the length of the kernel.
 Multiple values for n and m are tested in the experiments.
-All convolutional layers use the padding 'same' and L2 regularization.
+All convolutional layers use the padding 'same' ~\cite{keraspaddingsame}.
+With this setting, the width and height dimensions of the in- and output of a convolutional layer stay the same.
+Furthermore, we add L2 regularization to each convolutional layer ~\cite{ng2004feature}.
+L2 regularization shifts outlier weights closer to 0.
 Max Pool layers use a pool size of (2, 1), which reduces the shape by approximately half in length.
 The dropout rate of each Dropout Layer is 0.3.
 The Conv2D Layers of the second and third convolutional block have 8 and 16 layers respectively.
 After the convolutional blocks, we add two Dense Layers. 
 The first layer has 128 units and a ReLU Activation.
 The second and final layer has three Softmax activated units, which represent the predicted label.
-The network uses the Adam optimizer with a learning rate of 1e-3 and a Sparse Categorical Crossentropy as it's loss function.
+The network uses the Adam optimizer with a learning rate of $0.001$ and a Sparse Categorical Crossentropy as it's loss function.
 This configuration proofed to be the best in our experiments.
 
 \begin{figure}
 \centering 
 \includegraphics[width=0.70\textwidth]{network.jpg}
 \caption{Convolutional Neural Network for trail difficulty classification on stacked accelerometer and gyroscope data. 
-The input data is of shape (n, 4, 3), with n being the amount of data points per sample. 
+The input data is of shape ($n$, 4, 3), with n being the amount of data points per sample. 
 After the input layer, three convolutional blocks and two fully connected layers follow.}\label{fig3}	
 \end{figure}
 
 \subsection{Experiments}
 
+% Please add the following required packages to your document preamble:
 \begin{table}[]
+\vspace{-5mm}
 \centering
-\setlength{\tabcolsep}{0.5em} % for the horizontal padding
-{\renewcommand{\arraystretch}{1.2}% for the vertical padding
-\begin{tabular}{cc|c|c|c|c|c|}
-\cline{3-7}
-                                                    &         & \multicolumn{4}{c|}{Kernel sizes}          & Samples \\ \cline{3-7} 
-                                                    &         & (5,2)  & (10,2) & (20,2) & (40,2)          &         \\ \hline
-\multicolumn{1}{|c|}{\multirow{4}{*}{Window sizes}} & 1000ms  & 0.6370 & 0.6478 & 0.6283 & -               & 5937    \\ \cline{2-7} 
-\multicolumn{1}{|c|}{}                              & 2000ms  & 0.5599 & 0.6810 & 0.6797 & \textbf{0.6864} & 2971    \\ \cline{2-7} 
-\multicolumn{1}{|c|}{}                              & 5000ms  & 0.4201 & 0.5312 & 0.5764 & 0.6146          & 1150    \\ \cline{2-7} 
-\multicolumn{1}{|c|}{}                              & 10000ms & 0.4028 & 0.3472 & 0.3542 & 0.5347          & 575     \\ \hline
+\setlength{\tabcolsep}{0.4em} % for the horizontal padding
+{\renewcommand{\arraystretch}{1.1}% for the vertical padding
+\begin{tabular}{cc|c|c|c|c|c|c|c|}
+\cline{3-9}
+                                                    &         & \multicolumn{5}{c|}{KS}                                                                                                                                                                                                                                                                   & Samples & \begin{tabular}[c]{@{}c@{}}Samples after \\ balancing\end{tabular} \\ \cline{3-9} 
+                                                    &         & (5,2)                                                  & (10,2)                                                 & (20,2)                                                 & (40,2)                                                 & (60,2)                                                          &         &                                                                        \\ \hline
+\multicolumn{1}{|c|}{\multirow{5}{*}{WS}} & 1000ms  & \begin{tabular}[c]{@{}c@{}}0.4990\\ (271)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5313\\ (124)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5165\\ (249)\end{tabular} & -                                                      & -                                                               & 5937    & 10368                                                                  \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                              & 2000ms  & \begin{tabular}[c]{@{}c@{}}0.5155\\ (259)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5585\\ (300)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5734\\ (247)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5599\\ (183)\end{tabular} & -                                                               & 2971    & 5073                                                                   \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                              & 5000ms  & \begin{tabular}[c]{@{}c@{}}0.6181\\ (300)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6632\\ (515)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.7743\\ (726)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6632\\ (63)\end{tabular}  & \begin{tabular}[c]{@{}c@{}}0.7778\\ (79)\end{tabular}           & 1150    & 2019                                                                   \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                              & 10000ms & \begin{tabular}[c]{@{}c@{}}0.7222\\ (425)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6875\\ (473)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.7639\\ (548)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.8681\\ (607)\end{tabular} & \textbf{\begin{tabular}[c]{@{}c@{}}0.9097\\ (781)\end{tabular}} & 575     & 978                                                                    \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                              & 20000ms & \begin{tabular}[c]{@{}c@{}}0.6250\\ (456)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6111\\ (5)\end{tabular}   & \begin{tabular}[c]{@{}c@{}}0.6111\\ (162)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6250\\ (8)\end{tabular}   & \begin{tabular}[c]{@{}c@{}}0.6806\\ (545)\end{tabular}          & 286     & 498                                                                    \\ \hline
 \end{tabular}
 }
-\caption{Sparse Categorical Accuracy of the experiments. A window size of 2000ms and a kernel size of (40,2) creates the highest accuracy.}
+\caption{Sparse categorical accuracy and amount of epochs of the experiments. A window size of 10000ms with a kernel size of (60,2) creates the highest accuracy (0.9097) after 781 epochs on the test dataset.}
 \label{table:configurations}
 \end{table}
 
 Due to the fact that there are no established neural network configurations for trail difficulty classification, we test 16 combinations of multiple window-, as well as kernel sizes.
-We test four window sizes (1000ms, 2000ms, 5000ms, 10000ms) and four kernel sizes ((5,2), (10,2), (20, 2), (40,2)) (see Table~\ref{table:configurations}).
-The kernel-size (40,2) can not be run for a window size of 1000ms, because of too few datapoints within a sample.
-In order to reduce overfitting, we add an early stopping callback to the network, which stops the training process when there is no improvement for 50 epochs.
-We run a batch size of 32 and a steady learning rate of 1e-3.
+We test five window sizes (1000ms, 2000ms, 5000ms, 10000ms, 20000ms) and five kernel sizes ((5,2), (10,2), (20, 2), (40,2), (60,2)) (see Table~\ref{table:configurations}).
+For empty result cells, the amount of datapoints per sample is smaller than the kernel length.
+The dataset includes approximately 32\% of samples of label 0, 56\% of samples of label 1 and 12\% of samples of label 2.
+This uneven distribution of labels led the model to rarely predict the labels 0 and 2.
+Therefore we decided to compensate the inequality by copying existing examples of the underrepresented classes within the training set (so that the classes are balanced equally).
+In order to reduce overfitting, we add an early stopping callback to the network, which stops the training process when there is no improvement for 250 epochs (the patience value).
+With smaller patience values the network stopped learning too early in some cases.
+The maximum amount of epochs for training is 1500.
+We run a batch size of 32 and a steady learning rate of $0.001$.
 In Table~\ref{table:configurations} we show the resulting Sparse Categorical Accuracy, the amount of epochs before training was stopped and the amount of samples in the train and test set.
 The Sparse Categorical Accuracy measures the accuracy of the result of sparse multiclass classification problems ~\cite{moolayil2019keras}.
 For every experiment, we use a sliding window with an overlap of 75\%.
 To not have many highly similar examples in one batch, we shuffle the data before training.
-With a long window size of 10000ms, we achieve the worst results with all kernel sizes.
-Overfitting starts early, resulting in a rapidly decreasing Sparse Categorical Accuracy.
-This could be attributed to the low amount of samples (575) as well as overlapping labels within a sample.
-We observe better results for the shorter window size of 5000ms.
-However, the validation accuracy seems to decrease quickly and not increase before early stopping cancels the learning process.
-For all kernel sizes, smaller window sizes (1000ms, 2000ms) improves the results considerably.
-Using a bigger kernel, and therefore longer sequential dependencies, leads to a better performance as well.
-The best result is achieved for a window size of 2000ms and a kernel size of (40,2) (see Table~\ref{table:configurations}).
-Fig.~\ref{fig4} shows the curves of the Sparse Categorical Accuracy on the train as well on the test dataset across approximately 170 epochs.
+Short window sizes (1000ms, 2000ms) show lower accuracy than the larger samples across all kernel sizes.
+This could be attributed to the low amount of datapoints within a sample (25) as well as the short sample not representing the subsection of the trail.
+The lowest accuracy (0.4990) was reached with window size 1000ms and kernel size (5,2).
+%Longer window sizes, as well as bigger kernel sizes improve the result.
+With a window size of 10000ms and a kernel size of (60,2), we achieve a high sparse categorical accuracy of 0.9097.
+This leads to the conclusion, that a window length of 10000ms is necessary to represent a downhill trail subsection appropriately.
+Longer sequential dependencies (by using larger kernel lengths) show a positive effect on the difficulty classification as well.
+
+Fig.~\ref{fig4} shows the curves of the Sparse Categorical Accuracy on the train as well on the test dataset across 1000 epochs.
+Both values increase early on and level out with no major overfitting visible in the plot.
+The highest accuracy on the test dataset was achieved after 781 epochs.
+Fig.~\ref{fig3} shows the confusion matrix of the best resulting configuration, namely a window size of 10000ms and a kernel size of (60,2).
+Good results for all three classes are shown, with only few false positives in neighbored areas. 
+The matrix also highlights the fact, that the label 2 (hard) is underrepresented.
+However, the distribution of correctly predicted labels matches the distribution of the raw dataset well.
 
 \begin{figure}
 \vspace{-5mm}
 \centering
-\includegraphics[width=.8\textwidth]{accuracy_plot.png}
+\includegraphics[width=\textwidth]{accuracy_plot.png}
 \caption{Plot of the Sparse Categorical Accuracy (sca) on the train set (blue) as well as on the test set (orange).}\label{fig4}	
 \end{figure} 
 
-\FloatBarrier
-
-Both values increase early on and level out with no major overfitting visible in the plot.
-This leads to the conclusion, that a subsection of 2000ms is enough to represent downhill difficulty.
-Fig.~\ref{fig3} shows the confusion matrix of the best resulting configuration, namely 1000ms and a kernel of (40,2).
-It shows good results for easy and medium trail segments with few false positives in neighbored areas. 
-However, the matrix also highlights the fact, that the label 2 (hard) is underrepresented.
-
-
 \begin{figure}
 \centering 
-\includegraphics[width=0.70\textwidth]{confusionmatrix.png}
-\caption{The confusion matrix on the test dataset shows good results for easy and medium trail segments with few false positives in neighbored areas. An underrepresentation of the label 2 (hard) is noticeable.}\label{fig3}	
+\includegraphics[width=0.8\textwidth]{confusionmatrix.png}
+\caption{The confusion matrix for a window size of 10000ms and a kernel size of (60,2).}\label{fig3}	
 \end{figure}
 
 
@@ -252,12 +259,13 @@ Using mbientlab Meta Motion r0.2 sensor units, we recorded multiple rides on mul
 The sensor units provided us with accelerometer and gyroscope data in each three axes, which we concatenated to create an image-like representation of the data.
 Downhill trails were labeled according to their \textit{Singletrail-Skala} rating and a subjective up- or downgrading for subsections, that strongly diverge from their rating.
 We implemented a 2D convolutional neural network with two dense layers at the end for the classification process.
-We ran experiments with four different sample sizes (1000ms, 2000ms, 5000ms, 10000ms) and four different kernel sizes ((5,2), (10,2), (20,2), (40,2)).
-The best results could be observed with a sample size of 2000ms and a kernel size of (40,2), resulting in a Sparse Categorical Accuracy of 0.6864 on a 80/20 train/test split.
+We ran experiments with five different window sizes (1000ms, 2000ms, 5000ms, 10000ms, 20000ms) and five different kernel sizes ((5,2), (10,2), (20,2), (40,2), (60,2)).
+The best result could be observed with a sample size of 10000ms and a kernel size of (60,2), resulting in a Sparse Categorical Accuracy of 0.9097 on a 80/20 train/test split. 
 In future work, one could think of a non-supervised clustering method to avoid subjective input.
 Additionally, the dataset could possibly be improved by using more sensors, like high-resolution barometers or heartrate sensors.
-As can be seen in fig.~\ref{fig3} more examples for hard sections (label 2) are needed.
+As can be seen in Fig.~\ref{fig3} more examples for hard sections (label 2) are needed.
 This category is underrepresented in the data we collected.
+% TODO: Extend use case?
 \\
 With this work, we hope to reduce the amount of subjective rating of mountainbike trails and make their difficulty measurable.
 This could be a solution to classify trail difficulty consistently across bikeparks, open trails, topographies, or countries.

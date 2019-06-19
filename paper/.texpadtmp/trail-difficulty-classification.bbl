@@ -155,6 +155,10 @@ N.~Srivastava, G.~Hinton, A.~Krizhevsky, I.~Sutskever, and R.~Salakhutdinov,
   \emph{The Journal of Machine Learning Research}, vol.~15, no.~1, pp.
   1929--1958, 2014.
 
+\bibitem{keraspaddingsame}
+Keras, ``Convolutional layers,'' Jun. 2019,
+  \url{https://keras.io/layers/convolutional/}.
+
 \bibitem{moolayil2019keras}
 J.~Moolayil, ``Keras in action,'' in \emph{Learn Keras for Deep Neural
   Networks}.\hskip 1em plus 0.5em minus 0.4em\relax Springer, 2019, pp. 17--52.
