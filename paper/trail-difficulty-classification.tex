@@ -146,7 +146,7 @@ Each sensor generates datapoints for three axes (x, y, z) with an additional tim
 Zeng et al. ~\cite{zeng2014convolutional} interpret each axis of a sensor as a filter of the input to a 1D convolutional layer.
 We keep the same procedure but additionally stack each of the four sensors (two accelerometers, two gyroscopes) vertically to create an image-like representation.
 Fig.~\ref{fig2} visualizes the shape of our input data.
-Height and width of the image-like representation are represented by four sensors and n datapoints.
+Height and width of the image-like representation are represented by four sensors and $n$ datapoints.
 RGB-like channels are represented by the three axes x, y, and z.
 The square in the top left corner visualizes the kernel sliding across the input data.
 We split each recording into smaller samples utilizing a sliding window with an overlap of 75\%.
@@ -158,30 +158,30 @@ This leads to 5937, 2971, 1150, 575, and 286 samples respectively.
 
 In order to classify mountainbike downhill trails regarding their difficulty, we apply a convolutional neural network.
 Fig.~\ref{fig3} visualizes the network's architecture.
-The input to the first block is of shape ($n$, 4, 3), with n being the amount of data points per sample. 
-One sample consists of data of four sensors (vertically stacked), with each three axes (filters), and a sample size of n data points.
+The input to the first block is of shape ($n$, 4, 3), with $n$ being the amount of data points per sample. 
+One sample consists of data of four sensors (vertically stacked), with each three axes (filters), and a sample size of $n$ data points.
 We chain three convolutional blocks followed by two Dense Layers.
-Each convolutional block consists of one Conv2D, a Batch Normalization ~\cite{ioffe2015batch}, a ReLU Activation ~\cite{hahnloser2000digital}, a Max Pool ~\cite{matsugu2003subject} and a Dropout Layer ~\cite{srivastava2014dropout}.
-The convolutional layers use a kernel of shape ($m$, 2) and a stride of (1, 1), with m being the length of the kernel.
-Multiple values for n and m are tested in the experiments.
+Each convolutional block consists of one Conv2D ~\cite{krizhevsky2012imagenet}, a Batch Normalization ~\cite{ioffe2015batch}, a ReLU Activation ~\cite{hahnloser2000digital}, a Max Pool ~\cite{matsugu2003subject} and a Dropout Layer ~\cite{srivastava2014dropout}.
+The convolutional layers use a kernel of shape ($m$, 2) and a stride of (1, 1), with $m$ being the length of the kernel.
+Multiple values for $n$ and $m$ are tested in the experiments.
 All convolutional layers use the padding 'same' ~\cite{keraspaddingsame}.
 With this setting, the width and height dimensions of the in- and output of a convolutional layer stay the same.
 Furthermore, we add L2 regularization to each convolutional layer ~\cite{ng2004feature}.
 L2 regularization shifts outlier weights closer to 0.
 Max Pool layers use a pool size of (2, 1), which reduces the shape by approximately half in length.
 The dropout rate of each Dropout Layer is 0.3.
-The Conv2D Layers of the second and third convolutional block have 8 and 16 layers respectively.
+The Conv2D Layers of the second and third convolutional block have 8 and 16 filters respectively.
 After the convolutional blocks, we add two Dense Layers. 
 The first layer has 128 units and a ReLU Activation.
 The second and final layer has three Softmax activated units, which represent the predicted label.
-The network uses the Adam optimizer with a learning rate of $0.001$ and a Sparse Categorical Crossentropy as it's loss function.
+The network uses the Adam optimizer ~\cite{kingma2014adam} with a learning rate of $0.001$ and a Sparse Categorical Crossentropy as it's loss function.
 This configuration proofed to be the best in our experiments.
 
 \begin{figure}
 \centering 
 \includegraphics[width=0.70\textwidth]{network.jpg}
 \caption{Convolutional Neural Network for trail difficulty classification on stacked accelerometer and gyroscope data. 
-The input data is of shape ($n$, 4, 3), with n being the amount of data points per sample. 
+The input data is of shape ($n$, 4, 3), with $n$ being the amount of data points per sample. 
 After the input layer, three convolutional blocks and two fully connected layers follow.}\label{fig3}	
 \end{figure}
 
@@ -208,17 +208,17 @@ After the input layer, three convolutional blocks and two fully connected layers
 \label{table:configurations}
 \end{table}
 
-Due to the fact that there are no established neural network configurations for trail difficulty classification, we test 16 combinations of multiple window-, as well as kernel sizes.
+Due to the fact that there are no established neural network configurations for trail difficulty classification, we evaluate 25 combinations of window- and kernel sizes.
 We test five window sizes (1000ms, 2000ms, 5000ms, 10000ms, 20000ms) and five kernel sizes ((5,2), (10,2), (20, 2), (40,2), (60,2)) (see Table~\ref{table:configurations}).
 For empty result cells, the amount of datapoints per sample is smaller than the kernel length.
 The dataset includes approximately 32\% of samples of label 0, 56\% of samples of label 1 and 12\% of samples of label 2.
-This uneven distribution of labels led the model to rarely predict the labels 0 and 2.
+This uneven distribution led the model to rarely predict the labels 0 and 2.
 Therefore we decided to compensate the inequality by copying existing examples of the underrepresented classes within the training set (so that the classes are balanced equally).
 In order to reduce overfitting, we add an early stopping callback to the network, which stops the training process when there is no improvement for 250 epochs (the patience value).
 With smaller patience values the network stopped learning too early in some cases.
 The maximum amount of epochs for training is 1500.
 We run a batch size of 32 and a steady learning rate of $0.001$.
-In Table~\ref{table:configurations} we show the resulting Sparse Categorical Accuracy, the amount of epochs before training was stopped and the amount of samples in the train and test set.
+In Table~\ref{table:configurations} we show the resulting Sparse Categorical Accuracy, the amount of epochs before training was stopped and the amount of samples in the train set.
 The Sparse Categorical Accuracy measures the accuracy of the result of sparse multiclass classification problems ~\cite{moolayil2019keras}.
 For every experiment, we use a sliding window with an overlap of 75\%.
 To not have many highly similar examples in one batch, we shuffle the data before training.
@@ -242,7 +242,7 @@ However, the distribution of correctly predicted labels matches the distribution
 \vspace{-5mm}
 \centering
 \includegraphics[width=\textwidth]{accuracy_plot.png}
-\caption{Plot of the Sparse Categorical Accuracy (sca) on the train set (blue) as well as on the test set (orange).}\label{fig4}	
+\caption{Plot of the Sparse Categorical Accuracy (sca) on the train set (blue, upper) as well as on the test set (orange, lower).}\label{fig4}	
 \end{figure} 
 
 \begin{figure}
@@ -265,10 +265,13 @@ In future work, one could think of a non-supervised clustering method to avoid s
 Additionally, the dataset could possibly be improved by using more sensors, like high-resolution barometers or heartrate sensors.
 As can be seen in Fig.~\ref{fig3} more examples for hard sections (label 2) are needed.
 This category is underrepresented in the data we collected.
-% TODO: Extend use case?
 \\
 With this work, we hope to reduce the amount of subjective rating of mountainbike trails and make their difficulty measurable.
-This could be a solution to classify trail difficulty consistently across bikeparks, open trails, topographies, or countries.
+An automated recognition of downhill trail difficulty could be advantageous in diverse scenarios.
+For unlabeled, or mislabeled trails, our sensor analysis architecture can generate a fitting label.
+This can help tourist areas or mountainbike park operators describe the difficulty of new or existing trails consistently across areas, topographies, or countries.
+For social fitness networks like e.g. Strava ~\cite{strava} one could think of an autmated difficulty grading of rides (or subsections of rides).
+This would extend the existing performance comparison factors, like speed or distance, by a value for downhill trail difficulty.
 Furthermore, we hope to promote data analytics in the sport of mountainbiking by releasing a bigger and improved version of our dataset soon.
 
 

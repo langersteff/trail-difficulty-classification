@@ -8,51 +8,49 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: ../library.bib
-Warning--I didn't find a database entry for "ng2004feature"
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 
 Done.
-You've used 29 entries,
+You've used 33 entries,
             4087 wiz_defined-function locations,
-            984 strings with 12447 characters,
-and the built_in function-call counts, 19646 in all, are:
-= -- 1598
-> -- 432
-< -- 142
-+ -- 230
-- -- 78
-* -- 904
-:= -- 3008
-add.period$ -- 63
-call.type$ -- 29
-change.case$ -- 39
-chr.to.int$ -- 306
-cite$ -- 29
-duplicate$ -- 1473
-empty$ -- 1620
-format.name$ -- 96
-if$ -- 4555
+            1001 strings with 13017 characters,
+and the built_in function-call counts, 21930 in all, are:
+= -- 1778
+> -- 472
+< -- 154
++ -- 252
+- -- 85
+* -- 998
+:= -- 3359
+add.period$ -- 72
+call.type$ -- 33
+change.case$ -- 44
+chr.to.int$ -- 336
+cite$ -- 33
+duplicate$ -- 1655
+empty$ -- 1841
+format.name$ -- 105
+if$ -- 5094
 int.to.chr$ -- 0
-int.to.str$ -- 29
-missing$ -- 277
-newline$ -- 110
-num.names$ -- 29
-pop$ -- 644
+int.to.str$ -- 33
+missing$ -- 309
+newline$ -- 122
+num.names$ -- 33
+pop$ -- 728
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1522
+skip$ -- 1704
 stack$ -- 0
-substring$ -- 779
-swap$ -- 1164
-text.length$ -- 40
+substring$ -- 859
+swap$ -- 1288
+text.length$ -- 42
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 29
+type$ -- 33
 warning$ -- 0
-while$ -- 88
-width$ -- 31
-write$ -- 294
-(There was 1 warning)
+while$ -- 97
+width$ -- 35
+write$ -- 328
