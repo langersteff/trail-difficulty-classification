@@ -58,6 +58,27 @@ Due to factors like the various scales, different people grading the trails or d
 This work aims to make mountainbike track difficulty assessment less subjective and more measurable.
 In order to do so, we collect acceleration-, as well as gyroscope-data from multiple sensor units that are connected to the mountainbike frame as well as the rider.
 Because we do not collect data in dedicated mountainbike parks, but on open trails (hiking paths among others), we decided to use the three main difficulties given by the \textit{Singletrail-Skala} as the set of labels.
+
+\begin{table}[]
+\centering
+\setlength{\tabcolsep}{0.5em} % for the horizontal padding
+{\renewcommand{\arraystretch}{1.2}% for the vertical padding
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|l|l|}
+\hline
+Colored grading & Fine grading & Label & Description                                                                                                                                                    \\ \hline
+blue            & S0, S1       & 0     & \begin{tabular}[c]{@{}l@{}}Easy. \\ Mostly solid and non-slip surface. \\ Slight to moderate gradient. \\ No switchbacks. \\ Basic skills needed.\end{tabular}         \\ \hline
+red             & S2           & 1     & \begin{tabular}[c]{@{}l@{}}Medium. \\ Loose surface, bigger roots and stones.\\ Moderate steps and drops.\\ Moderate switchbacks.\\ Advanced skills needed.\end{tabular} \\ \hline
+black           & S3+          & 2     & \begin{tabular}[c]{@{}l@{}}Hard. \\ Loose surface, slippery, big roots and stones.\\ High drops.\\ Tight switchbacks.\\ Very good skills needed.\end{tabular}           \\ \hline
+\end{tabular}%
+}
+}
+\caption{Mapping of the \textit{Singletrail-Skala} grades to the labels used in our data set. Label 0 describes easy trails, label 1 medium trails, and label 2 hard trails.}
+\label{table:coloredgrading}
+\end{table}
+
+
+
 Table~\ref{table:coloredgrading} gives an overview of the three grades blue, red and black.
 Schymik et. al ~\cite{schymik2008singletrail} define the difficulties as follows:
 Blue describes easy trails, comprising the grades S0 and S1.
@@ -107,27 +128,11 @@ The accelerometer creates datapoints in three axes (x, y, z) in the unit g (equa
 The gyroscope creates datapoints in three axes (x, y, z) in the unit deg/s with a frequency of 25.00Hz.
 We synchronize the starting points of the recordings and linearly interpolate missing datapoints to reach a constant frequency of 25.00Hz for all sensors.
 
-\begin{table}[]
-\centering
-\setlength{\tabcolsep}{0.5em} % for the horizontal padding
-{\renewcommand{\arraystretch}{1.2}% for the vertical padding
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|l|l|l|l|}
-\hline
-Colored grading & Fine grading & Label & Description                                                                                                                                                    \\ \hline
-blue            & S0, S1       & 0     & \begin{tabular}[c]{@{}l@{}}Easy. \\ Mostly solid and non-slip surface. \\ Slight to moderate gradient. \\ No switchbacks. \\ Basic skills needed.\end{tabular}         \\ \hline
-red             & S2           & 1     & \begin{tabular}[c]{@{}l@{}}Medium. \\ Loose surface, bigger roots and stones.\\ Moderate steps and drops.\\ Moderate switchbacks.\\ Advanced skills needed.\end{tabular} \\ \hline
-black           & S3+          & 2     & \begin{tabular}[c]{@{}l@{}}Hard. \\ Loose surface, slippery, big roots and stones.\\ High drops.\\ Tight switchbacks.\\ Very good skills needed.\end{tabular}           \\ \hline
-\end{tabular}%
-}
-}
-\caption{Mapping of the \textit{Singletrail-Skala} grades to the labels used in our data set. Label 0 describes easy trails, label 1 medium trails, and label 2 hard trails.}
-\label{table:coloredgrading}
-\end{table}
-
 Labeling of the data happens after the actual data collection process.
 We record every downhill ride with an action camera (mounted to the rider's chest), synchronize the video with the data recordings, and manually label subsections of the trail.
 For the majority of subsections on open trails, we use the difficulty grading provided by \textit{Openstreetmap}.
+Those gradings are made visible in mountainbike specific \textit{Openstreetmap} variants and can also be found in the (XML-like) \textit{.OSM} exports of an area.
+One "way" node (which describes a trail) then includes another node "tag", comprising the difficulty description.
 For subsections that the \textit{Singletrail Skala} would consider to not represent this difficulty (as per their description), we up- or downgrade the difficulty label.
 Downgrading mostly occurs for fireroads or other very easy sections, upgrading for particularly steep or tight sections.
 
@@ -153,6 +158,7 @@ We split each recording into smaller samples utilizing a sliding window with an 
 This allows us to create many examples from few data recordings.
 In our experiments we test five different window sizes, namely 1000ms, 2000ms, 5000ms, 10000ms, and 20000ms resulting in 25, 50, 125, 250, and 500 data points per example.
 This leads to 5937, 2971, 1150, 575, and 286 samples respectively.
+For each experiment, we use a 80/20 test/train split in order to evaluate the network's performance on unseen data.
 
 \section{Classification through a 2D convolutional neural network}
 
@@ -187,21 +193,20 @@ After the input layer, three convolutional blocks and two fully connected layers
 
 \subsection{Experiments}
 
-% Please add the following required packages to your document preamble:
 \begin{table}[]
-\vspace{-5mm}
 \centering
-\setlength{\tabcolsep}{0.4em} % for the horizontal padding
-{\renewcommand{\arraystretch}{1.1}% for the vertical padding
+%\vspace{-5mm}
+\setlength{\tabcolsep}{0.2em} % for the horizontal padding
+{\renewcommand{\arraystretch}{1.07}% for the vertical padding
 \begin{tabular}{cc|c|c|c|c|c|c|c|}
 \cline{3-9}
-                                                    &         & \multicolumn{5}{c|}{KS}                                                                                                                                                                                                                                                                   & Samples & \begin{tabular}[c]{@{}c@{}}Samples after \\ balancing\end{tabular} \\ \cline{3-9} 
-                                                    &         & (5,2)                                                  & (10,2)                                                 & (20,2)                                                 & (40,2)                                                 & (60,2)                                                          &         &                                                                        \\ \hline
-\multicolumn{1}{|c|}{\multirow{5}{*}{WS}} & 1000ms  & \begin{tabular}[c]{@{}c@{}}0.4990\\ (271)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5313\\ (124)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5165\\ (249)\end{tabular} & -                                                      & -                                                               & 5937    & 10368                                                                  \\ \cline{2-9} 
-\multicolumn{1}{|c|}{}                              & 2000ms  & \begin{tabular}[c]{@{}c@{}}0.5155\\ (259)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5585\\ (300)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5734\\ (247)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5599\\ (183)\end{tabular} & -                                                               & 2971    & 5073                                                                   \\ \cline{2-9} 
-\multicolumn{1}{|c|}{}                              & 5000ms  & \begin{tabular}[c]{@{}c@{}}0.6181\\ (300)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6632\\ (515)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.7743\\ (726)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6632\\ (63)\end{tabular}  & \begin{tabular}[c]{@{}c@{}}0.7778\\ (79)\end{tabular}           & 1150    & 2019                                                                   \\ \cline{2-9} 
-\multicolumn{1}{|c|}{}                              & 10000ms & \begin{tabular}[c]{@{}c@{}}0.7222\\ (425)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6875\\ (473)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.7639\\ (548)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.8681\\ (607)\end{tabular} & \textbf{\begin{tabular}[c]{@{}c@{}}0.9097\\ (781)\end{tabular}} & 575     & 978                                                                    \\ \cline{2-9} 
-\multicolumn{1}{|c|}{}                              & 20000ms & \begin{tabular}[c]{@{}c@{}}0.6250\\ (456)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6111\\ (5)\end{tabular}   & \begin{tabular}[c]{@{}c@{}}0.6111\\ (162)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6250\\ (8)\end{tabular}   & \begin{tabular}[c]{@{}c@{}}0.6806\\ (545)\end{tabular}          & 286     & 498                                                                    \\ \hline
+                                                                                               &         & \multicolumn{5}{c|}{kernel size}                                                                                                                                                                                                                                                                    & Samples & \begin{tabular}[c]{@{}c@{}}Samples after \\ over-sampling\end{tabular} \\ \cline{3-9} 
+                                                                                               &         & (5,2)                                                  & (10,2)                                                 & (20,2)                                                 & (40,2)                                                 & (60,2)                                                          &         &                                                                        \\ \hline
+\multicolumn{1}{|c|}{\multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}window\\ size\end{tabular}}} & 1000ms  & \begin{tabular}[c]{@{}c@{}}0.4990\\ (271)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5313\\ (124)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5165\\ (249)\end{tabular} & -                                                      & -                                                               & 5937    & 10368                                                                  \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                                                                         & 2000ms  & \begin{tabular}[c]{@{}c@{}}0.5155\\ (259)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5585\\ (300)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5734\\ (247)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.5599\\ (183)\end{tabular} & -                                                               & 2971    & 5073                                                                   \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                                                                         & 5000ms  & \begin{tabular}[c]{@{}c@{}}0.6181\\ (300)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6632\\ (515)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.7743\\ (726)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6632\\ (63)\end{tabular}  & \begin{tabular}[c]{@{}c@{}}0.7778\\ (79)\end{tabular}           & 1150    & 2019                                                                   \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                                                                         & 10000ms & \begin{tabular}[c]{@{}c@{}}0.7222\\ (425)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6875\\ (473)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.7639\\ (548)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.8681\\ (607)\end{tabular} & \textbf{\begin{tabular}[c]{@{}c@{}}0.9097\\ (781)\end{tabular}} & 575     & 978                                                                    \\ \cline{2-9} 
+\multicolumn{1}{|c|}{}                                                                         & 20000ms & \begin{tabular}[c]{@{}c@{}}0.6250\\ (456)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6111\\ (5)\end{tabular}   & \begin{tabular}[c]{@{}c@{}}0.6111\\ (162)\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.6250\\ (8)\end{tabular}   & \begin{tabular}[c]{@{}c@{}}0.6806\\ (545)\end{tabular}          & 286     & 498                                                                    \\ \hline
 \end{tabular}
 }
 \caption{Sparse categorical accuracy and amount of epochs of the experiments. A window size of 10000ms with a kernel size of (60,2) creates the highest accuracy (0.9097) after 781 epochs on the test dataset.}
@@ -224,19 +229,6 @@ For every experiment, we use a sliding window with an overlap of 75\%.
 To not have many highly similar examples in one batch, we shuffle the data before training.
 Short window sizes (1000ms, 2000ms) show lower accuracy than the larger samples across all kernel sizes.
 This could be attributed to the low amount of datapoints within a sample (25) as well as the short sample not representing the subsection of the trail.
-The lowest accuracy (0.4990) was reached with window size 1000ms and kernel size (5,2).
-%Longer window sizes, as well as bigger kernel sizes improve the result.
-With a window size of 10000ms and a kernel size of (60,2), we achieve a high sparse categorical accuracy of 0.9097.
-This leads to the conclusion, that a window length of 10000ms is necessary to represent a downhill trail subsection appropriately.
-Longer sequential dependencies (by using larger kernel lengths) show a positive effect on the difficulty classification as well.
-
-Fig.~\ref{fig4} shows the curves of the Sparse Categorical Accuracy on the train as well on the test dataset across 1000 epochs.
-Both values increase early on and level out with no major overfitting visible in the plot.
-The highest accuracy on the test dataset was achieved after 781 epochs.
-Fig.~\ref{fig3} shows the confusion matrix of the best resulting configuration, namely a window size of 10000ms and a kernel size of (60,2).
-Good results for all three classes are shown, with only few false positives in neighbored areas. 
-The matrix also highlights the fact, that the label 2 (hard) is underrepresented.
-However, the distribution of correctly predicted labels matches the distribution of the raw dataset well.
 
 \begin{figure}
 \vspace{-5mm}
@@ -245,14 +237,37 @@ However, the distribution of correctly predicted labels matches the distribution
 \caption{Plot of the Sparse Categorical Accuracy (sca) on the train set (blue, upper) as well as on the test set (orange, lower).}\label{fig4}	
 \end{figure} 
 
+\FloatBarrier
+
+The lowest accuracy (0.4990) was reached with window size 1000ms and kernel size (5,2).
+With a window size of 10000ms and a kernel size of (60,2), we achieve a high sparse categorical accuracy of 0.9097.
+This leads to the conclusion, that a window length of 10000ms is necessary to represent a downhill trail subsection appropriately.
+Longer sequential dependencies (by using larger kernel lengths) show a positive effect on the difficulty classification as well.
+
+
+
+Fig.~\ref{fig4} shows the curves of the Sparse Categorical Accuracy on the train as well on the test dataset across 1000 epochs.
+Both values increase early on and level out with no major overfitting visible in the plot.
+The highest accuracy on the test dataset was achieved after 781 epochs.
+
 \begin{figure}
 \centering 
+\vspace{-5mm}
 \includegraphics[width=0.8\textwidth]{confusionmatrix.png}
-\caption{The confusion matrix for a window size of 10000ms and a kernel size of (60,2).}\label{fig3}	
+\caption{The confusion matrix for a window size of 10000ms and a kernel size of (60,2).}\label{fig5}	
 \end{figure}
 
 
-\section{Discussion}
+Fig.~\ref{fig5} shows the confusion matrix of the best resulting configuration, namely a window size of 10000ms and a kernel size of (60,2).
+Good results for all three classes are shown, with only few false positives in neighbored areas. 
+The matrix also highlights the fact, that the label 2 (hard) is underrepresented.
+However, the distribution of correctly predicted labels matches the distribution of the raw dataset well.
+
+
+
+
+
+\section{Conclusion}
 In this work, we proposed an end-to-end deep learning approach to classify mountainbike downhill trails regarding their difficulty. 
 We gave an introduction to multiple official difficulty scales and decided to use the \textit{Singletrail-Skala} for this work.
 Using mbientlab Meta Motion r0.2 sensor units, we recorded multiple rides on multiple trail segments, resulting in 2971 training examples for the best window-size/kernel-size combination.
@@ -263,14 +278,14 @@ We ran experiments with five different window sizes (1000ms, 2000ms, 5000ms, 100
 The best result could be observed with a sample size of 10000ms and a kernel size of (60,2), resulting in a Sparse Categorical Accuracy of 0.9097 on a 80/20 train/test split. 
 In future work, one could think of a non-supervised clustering method to avoid subjective input.
 Additionally, the dataset could possibly be improved by using more sensors, like high-resolution barometers or heartrate sensors.
-As can be seen in Fig.~\ref{fig3} more examples for hard sections (label 2) are needed.
+As can be seen in Fig.~\ref{fig5} more examples for hard sections (label 2) are needed.
 This category is underrepresented in the data we collected.
 \\
 With this work, we hope to reduce the amount of subjective rating of mountainbike trails and make their difficulty measurable.
 An automated recognition of downhill trail difficulty could be advantageous in diverse scenarios.
 For unlabeled, or mislabeled trails, our sensor analysis architecture can generate a fitting label.
 This can help tourist areas or mountainbike park operators describe the difficulty of new or existing trails consistently across areas, topographies, or countries.
-For social fitness networks like e.g. Strava ~\cite{strava} one could think of an autmated difficulty grading of rides (or subsections of rides).
+For social fitness networks like e.g. Strava ~\cite{strava} one could think of an automated difficulty grading of rides (or subsections of rides).
 This would extend the existing performance comparison factors, like speed or distance, by a value for downhill trail difficulty.
 Furthermore, we hope to promote data analytics in the sport of mountainbiking by releasing a bigger and improved version of our dataset soon.
 
